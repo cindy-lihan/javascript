@@ -1,0 +1,14 @@
+.slide-window{
+    width: 400px;
+    overflow: hidden;
+
+}
+.images{
+    display: flex;
+    align-items: flex-start;
+    transition: all 0.5s;
+}
+
+.images > img{
+    vertical-align: top;
+}
