@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.19.2/axios.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='app'>
+    </div>
+
+</body>
+<script>
+    fakeData()
+// mvc
+let model = {
+  data:{
+    name: '',
+    number: 0,
+    id: ''
+    
+  },
+  fetch(id){
+    return axios.get(`/books/${id}`).then((response)=>{
+      this.data = response.data
+      return response
+    })
+  },
+  update(id,book){
+    return axios.put(`/books/${id}`,book).then((response)=>{
+      console.log('response')
+      console.log(response)
+      this.data = response.data
+      return response
+    })
+  }
+ 
+}
+
+let view = {
+  el:'#app',
+  template:`
+     <div>
+     书名：__name__
+     数量：<span id='number'>__number__</span>
+     </div>
+     <div>     
+        <button id='addOne'>加1</button>
+        <button id='minusOne'>减1</button>
+        <button id='clear'>清空</button>
+     </div>
+    `,
+  render(data){
+    let html = this.template.replace('__name__', data.name).replace('__number__', data.number)
+    $(this.el).html(html)
+  }
+}
+
+var controller = {
+  init(options){
+    let {view, model} = options
+    this.view = view
+    this.model = model
+    this.view.render(this.model.data) 
+    this.bindEvents()
+    this.model.fetch(1).then(({data})=>{
+      this.view.render(this.model.data)
+    })
+  },
+  addOne(){
+        let originNumber = $('#number').text()
+        let newNumber = originNumber - 0 + 1
+        this.model.update(1,{number: newNumber}).then(({data})=>{
+           this.view.render(this.model.data)
+       })
+    
+  },
+  minusOne(){
+     let originNumber = $('#number').text()
+     let newNumber = originNumber - 0 - 1
+     this.model.update(1,{number: newNumber}).then(({data})=>{
+           this.view.render(this.model.data)
+       }) 
+  },
+  reset(){
+    this.model.update(1,{number: 0}).then(({data})=>{
+           this.view.render(this.model.data)
+       })
+  },
+  bindEvents(){
+    $(this.view.el).on('click', '#addOne', this.addOne.bind(this))
+    $(this.view.el).on('click', '#minusOne',this.minusOne.bind(this))
+    $(this.view.el).on('click', '#clear', this.reset.bind(this))
+  }
+}
+
+controller.init({view:view,model:model})
+
+//模拟后台获取数据
+function fakeData(){
+   let book = {
+        name: 'javascript 忍者秘籍',
+        number: 2,
+        id: 1
+    }
+    // 在真正返回response之前使用
+    axios.interceptors.response.use(function (response) {
+        let { config: { method, url, data } } = response //es6解构，此处data为请求data
+        if (url === '/books/1' && method === 'get') {
+            response.data = book
+        } else if (url === '/books/1' && method === 'put') {
+          data = JSON.parse(data) 
+          Object.assign(book, data)
+            response.data = book
+        }
+        return response
+    })
+
+ 
+}
+// 废弃的意大利面条式代码
+function oldFun(){
+     fakeData()
+    // 上面是假的后台
+    axios.get('/books/1').then(({ data }) => { //es6解构
+        console.log(data)
+        let originHtml = $('#app').html()
+        let newHtml = originHtml.replace('__name__', data.name).replace('__number__', data.number)
+        $('#app').html(newHtml)
+    })
+
+    $('#app').on('click', '#addOne', function () {
+        let originNumber = $('#number').text()
+        let newNumber = originNumber - 0 + 1
+        axios.put('/books/1', {
+            number: newNumber
+        }).then(() => {
+            $('#number').text(newNumber)
+        })
+    })
+    $('#app').on('click', '#minusOne', function () {
+        let originNumber = $('#number').text()
+        let newNumber = originNumber - 0 - 1
+        axios.put('/books/1', {
+            number: newNumber
+        }).then(() => {
+            $('#number').text(newNumber)
+        })
+    })
+    $('#app').on('click', '#clear', function () {
+        axios.put('/books/1', {
+            number: 0
+        }).then(() => {
+            $('#number').text(0)
+        })
+    })
+  
+}
+ </script>
+ 
+ </html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id ="app"> 
+    <my-cpn></my-cpn>
+  </div>
+
+  <script>
+    // 1.创建组件构造器
+    const cpn = Vue.extend({
+      template:`
+      <div>
+        <h2>这是标题</h2>
+        <p>这是内容</p>
+      </div>
+      `
+    })
+    // 2.注册组件 -- 全局
+    // Vue.component('my-cpn',cpn)
+   //创建Vue实例,得到 ViewModel
+   
+   const app = new Vue({
+    el: '#app',
+    data: {},
+    methods: {},
+    // 2.注册组件 -- 局部
+    components:{
+      'my-cpn':cpn
+    }
+   });
+  </script>
+</body>
+
+</html>

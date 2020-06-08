@@ -1,0 +1,52 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+  </head>
+  
+  <body>
+    <div id ="app"> 
+   <parent-cpn></parent-cpn>
+    </div>
+  
+    <script>
+      const childCpn = Vue.extend({
+        template:`
+        <div>
+        <h2>这是子标题</h2>
+        <p>这是内容</p>
+      </div>
+      `
+      })
+      const parentCpn = Vue.extend({
+        template:`
+        <div>
+        <h2>这是父标题</h2>
+        <p>这是内容</p>
+        <child-cpn></child-cpn>
+      </div>
+      `,
+      components:{
+        'child-cpn':childCpn,
+      }
+      })
+      
+     //创建Vue实例,得到 ViewModel
+     const app = new Vue({
+      el: '#app',
+      data: {},
+      methods: {},
+      components:{
+        'parent-cpn':parentCpn,
+      }
+     });
+    </script>
+  </body>
+  
+  </html>
+  

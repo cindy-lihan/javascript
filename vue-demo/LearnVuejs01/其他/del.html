@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue demo</title>
+    <style>
+        div.active {
+            background: red;
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 数据绑定到 DOM 文本 -->
+    <div id="app">
+        {{message}}
+    </div>
+    <!-- 数据动态绑定到attribute -->
+    <div id="app-2">
+        <span v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+        </span>
+    </div>
+    <!-- 条件与循环 -->
+    <div id="app-3">
+        <p v-if="seen">现在可以看到我了</p>
+    </div>
+    <div id="app-4">
+        <ol>
+            <li v-for="todo in todoList">
+                {{todo.text}}
+            </li>
+        </ol>
+    </div>
+    <!-- 处理用户输入 -->
+    <div id="app-5">
+        <p>{{message}}</p>
+        <button v-on:click="reverseMessage">反转消息</button>
+    </div>
+    <div id="app-6">
+        <p>{{message}}</p>
+        <input v-model='message'></input>
+    </div>
+    <div id="app-7">
+        <ol>
+            <todo-item v-for="item in todoList" v-bind:todo="item" v-bind:key="item.id">
+            </todo-item>
+        </ol>
+    </div>
+    <div id="data-1">
+        {{a}}
+        {{b}}
+    </div>
+    <!-- 事件动态参数  ******暂时有问题-->
+    <a id='event-1' v-on:[eventName]="doSomething">链接1</a>
+    <a id='event-2' v-bind:[attributeName]="url">链接2</a>
+    <!-- 计算属性 -->
+    <div id="demo-1">{{ fullName }}</div>
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question:
+            <input type="text" v-model="question">
+        </p>
+        <p>{{ answer }}</p>
+    </div>
+
+    <div id='classDemo1' class="static" v-bind:class="{ active: isActive }"></div>
+    <div id='classDemo2' v-bind:class="[activeClass, errorClass]"></div>
+    <!-- 组件 -->
+    <div id="components-demo">
+        <button-counter></button-counter>
+    </div>
+    <div id="blog-demo">
+        <blog-post title="My journey with Vue"></blog-post>
+        <blog-post title="Blogging with Vue"></blog-post>
+        <blog-post title="Why Vue is so fun"></blog-post>
+    </div>
+    <div id="blog-post-demo">
+        <blog-post v-for="post in posts" v-bind:key="post.id" v-bind:title="post.title"></blog-post>
+    </div>
+
+
+    <div id="v-show-demo">
+        <h1 v-show="ok">Hello!</h1>
+    </div>
+    <!-- 表单输入 -->
+    <div id='input-1'>
+        <input type="text" v-model="message" placeholder="edit me">
+        <p>Message is: {{ message }}</p>
+    </div>
+    <!-- 复选框 -->
+    <div id="input-2">
+        <input type="checkbox" value="Jack" v-model="names" id="jack">
+        <label for="jack">Jack</label>
+        <input type="checkbox" value="Cindy" v-model="names" id="cindy">
+        <label for="cindy">Cindy</label>
+        <input type="checkbox" value="Mike" v-model="names" id="mike">
+        <label for="mike">Mike</label>
+        <br>
+        <span>Checked names: {{ names }}</span>
+    </div>
+    <!-- 监听子组件事件 -->
+    <div id="blog-post-event-demo">
+        <div :style="{fontSize:postFontSize + 'em'}">
+            <blog-post v-for="post in posts" v-bind:key="post.id" v-bind:post="post"
+            v-on:enlarge-text="postFontSize += 0.1"></blog-post>
+        </div>
+
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script>
+    Vue.component('blog-post', {
+        props: ['post'],
+        template: `
+        <div class="blog-post">
+          <h3>{{ post.title }}</h3>
+          <button v-on:click="$emit('enlarge-text')">
+            Enlarge text
+          </button>
+          <div v-html="post.content"></div>
+        </div>
+  `
+    })
+    new Vue({
+        el: '#blog-post-event-demo',
+        data: {
+            posts: [
+                { id: 1, title: 'My journey with Vue', content: '...content...' },
+                { id: 2, title: 'Blogging with Vue', content: '...content...' },
+                { id: 3, title: 'Why Vue is so fun', content: '...content...' }
+            ],
+            postFontSize: 1
+
+        }
+    })
+    // new Vue({
+    //     el: '#input-2',
+    //     data: {
+    //         names: []
+    //     }
+    // })
+    // new Vue({
+    //     el: '#input-1',
+    //     data: {
+    //         message: '',
+    //         value: ''
+    //     }
+    // })
+
+    // new Vue({
+    //     el: '#v-show-demo',
+    //     data: {
+    //         ok: true
+    //     }
+    // })
+    // // 全局注册
+    // Vue.component('button-counter', {
+    //     data: function () {
+    //         return {
+    //             count: 0
+    //         }
+    //     },
+    //     template: '<button v-on:click="count++">You clicked me {{ count }}  times.<button>'
+    // })
+    // new Vue({ el: '#components-demo' })
+    // 局部注册
+    // props
+    Vue.component('blog-post', {
+        props: ['title'],
+        template: '<h3>{{ title }}</h3>'
+    })
+    new Vue({ el: '#blog-demo' })
+
+    new Vue({
+        el: '#blog-post-demo',
+        data: {
+            posts: [
+                { id: 1, title: 'My journey with Vue' },
+                { id: 2, title: 'Blogging with Vue' },
+                { id: 3, title: 'Why Vue is so fun' }
+            ]
+        }
+    })
+    // class和style
+    var classDemo2 = new Vue({
+        el: '#classDemo2',
+        data: {
+            activeClass: 'active',
+            errorClass: 'text-danger'
+        }
+    })
+    var classDemo1 = new Vue({
+        el: '#classDemo1',
+        data: {
+            isActive: false
+        }
+    })
+
+    // watch实例
+    var watchExampleVM = new Vue({
+        el: '#watch-example',
+        data: {
+            question: '',
+            answer: 'I cannot give you an answer until you ask a question!'
+        },
+        watch: {
+            // 如果 `question` 发生改变，这个函数就会运行
+            question: function (newQuestion, oldQuestion) {
+                this.answer = 'Waiting for you to stop typing...'
+                this.debouncedGetAnswer()
+            }
+        },
+        created: function () {
+            this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+        },
+        methods: {
+            getAnswer: function () {
+                if (this.question.indexOf('?') === -1) {
+                    this.answer = 'Questions usually contain a question mark. ;-)'
+                    return
+                }
+                this.answer = 'Thinking...'
+                var vm = this
+                axios.get('https://yesno.wtf/api')
+                    .then(function (response) {
+                        vm.answer = _.capitalize(response.data.answer)
+                    })
+                    .catch((err) => {
+                        vm.answer = 'Error! Could not reach the API. ' + error
+                    })
+            }
+        }
+    })
+
+
+
+    var demo1 = new Vue({
+        el: '#demo-1',
+        data: {
+            firstName: 'Foo',
+            lastName: 'Bar'
+        },
+        computed: {
+            fullName: {
+                get: function () {
+                    return this.firstName + ' ' + this.lastName
+                },
+                set:
+                    function (val) {
+                        var names = val.split(' ')
+                        this.firstName = names[0]
+                        this.lastName = names[names.length - 1]
+                    }
+            }
+        }
+
+    })
+
+    demo1.fullName = 'John Doe'
+    console.log(demo1.firstName) //也会改变
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+
+    var app2 = new Vue({
+        el: '#app-2 > span',
+        data: {
+            message: '页面加载于 ' + new Date().toLocaleString()
+        }
+    })
+
+    var app3 = new Vue({
+        el: '#app-3',
+        data: {
+            seen: false
+        }
+    })
+
+
+    var app4 = new Vue({
+        el: '#app-4',
+        data: {
+            todoList: [
+                { text: '学习html' },
+                { text: '学习css' },
+                { text: '学习js' },
+                { text: '学习vue' }
+            ]
+        }
+    })
+    app4.todoList.push({ text: '新项目' })
+
+    var app5 = new Vue({
+        el: '#app-5',
+        data: {
+            message: 'Hello Vue!',
+        },
+        methods: {
+            reverseMessage: function () {
+                this.message = this.message.split(' ').reverse().join(' ')
+            }
+        },
+    })
+    var app6 = new Vue({
+        el: '#app-6',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+
+    Vue.component('todo-item', {
+        props: ['todo'],
+        template: '<li>{{todo.text}}</li>'
+    })
+
+    var app7 = new Vue({
+        el: '#app-7',
+        data: {
+            todoList: [
+                { id: 0, text: '运动' },
+                { id: 1, text: '学习' },
+                { id: 2, text: '睡觉' }
+            ]
+        }
+    })
+    // 数据与方法
+    // 我们的数据对象
+    var data = { a: 1, b: '' }
+
+    // 该对象被加入到一个 Vue 实例中
+    var vm = new Vue({
+        el: '#data-1',
+        data: data
+    })
+
+    // 获得这个实例上的属性
+    // 返回源数据中对应的字段
+    console.log(vm.a == data.a)// => true
+
+
+    // 设置属性也会影响到原始数据
+    vm.a = 2
+    console.log(data.a) // => 2
+
+// // ……反之亦然
+// data.a = 3
+// console.log(vm.a) // => 3
+
+// var event1 = new Vue({
+//     el: '#event-1',
+//     data:{
+//         eventname: 'focus'
+//     },
+//     methods:{
+//         doSomething: function (){
+//             console.log('focus')
+//         }
+//     }
+// })
+
+// var event2 = new Vue({
+//     el: '#event-2',
+//     data:{
+//         attributeName : "href"
+//     }
+// })
+
+
+</script>
+
+</html>

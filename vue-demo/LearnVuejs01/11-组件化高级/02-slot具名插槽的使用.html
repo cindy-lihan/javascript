@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>slot-插槽基本使用</title>
+  <script src="../js/vue.js"></script>
+</head>
+
+<body>
+  <div id ="app"> 
+   
+  </div>
+  <template id="cpn">
+    <div>
+     <slot name="left"><span>左边</span></slot>  
+     <slot name="center"><span>中间</span></slot>  
+     <slot name="right"><span>右边</span></slot>  
+
+    </div>
+  </template>
+
+  <script>
+   //创建Vue实例,得到 ViewModel
+   const app = new Vue({
+    el: '#app',
+    data: {},
+    methods: {},
+    components:{
+      cpn:{
+        template:'#cpn'
+      }
+    }
+   });
+  </script>
+</body>
+
+</html>

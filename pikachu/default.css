@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+#code{
+    height: 100vh;
+    overflow: hidden;
+    position:fixed;
+    left:0;
+    width:50%;
+    height:100%
+}
+
+#preview{
+    position:fixed;
+    right:0;
+    width:50%;
+    height:100%;
+    background:blue;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: gray;
+    padding:16px;
+
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>作用域插槽</title>
+  <!-- <script src="../js/vue.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+  <div id ="app">
+    <cpn></cpn>
+    <cpn>
+      <template slot-scope="slot" slot='header'>
+          <!-- <span v-for='item in slot.data'>{{item}}</span> -->
+          <span>{{slot.data.join(' - ')}}</span>
+      </template>
+      <template slot='footer'>
+          <!-- <span v-for='item in slot.data'>{{item}}</span> -->
+          <div>底部分割线++++++++</div>
+      </template>
+    </cpn>
+    <cpn>
+        <template v-slot:header="slot">
+            <!-- <span v-for='item in slot.data'>{{item}}</span> -->
+            <span>{{slot.data.join(' * ')}}</span>
+        </template>
+        <template v-slot:footer>
+            <!-- <span v-for='item in slot.data'>{{item}}</span> -->
+            <div>底部分割线&&&&&&&&</div>
+        </template>
+      </cpn>
+  </div>
+
+
+  <template id="cpn">
+    <div>
+    <slot :data='language' name='header'>
+        <ul>
+            <li v-for='item in language'>{{item}}</li>
+          </ul>
+    </slot> 
+    <slot name='footer'>
+        <span>底部文字</span>
+    </slot> 
+    </div>
+  </template>
+
+  <script>
+   //创建Vue实例,得到 ViewModel
+   const app = new Vue({
+    el: '#app',
+    data: {},
+    methods: {},
+    components:{
+      cpn:{
+        template:'#cpn',
+        data(){
+          return {
+            language:['JavaScript','C++','Java','C#','Python','Go']
+          }
+        }
+      }
+    }
+   });
+  </script>
+</body>
+
+</html>
